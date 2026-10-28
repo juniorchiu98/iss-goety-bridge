@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AGA",
+    "SLS",
+    "AGA"
+  ],
+  "key": {
+    "A": { "item": "minecraft:amethyst_shard" },
+    "G": { "item": "goety:dark_ingot" },
+    "S": { "item": "irons_spellbooks:arcane_ingot" },
+    "L": { "item": "minecraft:lapis_lazuli" }
+  },
+  "result": {
+    "item": "issgoety:soul_converter",
+    "count": 1
+  }
+}

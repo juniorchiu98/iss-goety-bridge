@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "goety:rot",
+    "goety:death",
+    "goety:doom",
+    "goety:soul_leech",
+    "goety:life_leech"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "item.issgoety.soul_converter": "靈魂轉換器",
+  "tooltip.issgoety.socketed_focus": "聚晶:%s",
+  "message.issgoety.focus_socketed": "已裝上聚晶:%s",
+  "message.issgoety.focus_removed": "已取出聚晶:%s",
+  "message.issgoety.not_enough_souls": "靈魂能量不足",
+  "spell.issgoety.focus_cast": "聚晶法術",
+  "spell.issgoety.focus_cast_continuous": "持續施放聚晶",
+  "spell.issgoety.focus_cast_charging": "蓄力施放聚晶",
+  "message.issgoety.focus_unsupported": "這個聚晶無法裝在法杖上施放",
+  "message.issgoety.focus_cooldown": "聚晶冷卻中",
+  "screen.issgoety.staff_focus": "法杖聚晶槽",
+  "screen.issgoety.staff_focus.current": "目前聚晶",
+  "screen.issgoety.staff_focus.inventory": "可用聚晶",
+  "screen.issgoety.staff_focus.offhand": "副手",
+  "screen.issgoety.staff_focus.remove": "取出聚晶",
+  "screen.issgoety.staff_focus.hint": "按 Esc 關閉",
+  "screen.issgoety.staff_focus.select_hint": "移動滑鼠到聚晶並點擊，或按 X 選取高亮聚晶",
+  "screen.issgoety.staff_focus.empty": "背包中沒有可用的 Goety 聚晶"
+}

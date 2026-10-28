@@ -1,0 +1,165 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            property 'forge.enabledGameTestNamespaces', mod_id
+        }
+
+        server {
+            property 'forge.enabledGameTestNamespaces', mod_id
+            args '--nogui'
+        }
+
+        data {
+            workingDirectory project.file('run-data')
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {
+    mavenCentral()
+
+    // CurseForge-hosted mod artifacts used by fg.deobf dependencies
+    maven {
+        name = 'CurseMaven'
+        url = 'https://www.cursemaven.com'
+    }
+
+    flatDir {
+        dir 'libs'
+    }
+
+    maven {
+        name = 'Sponge'
+        url = 'https://repo.spongepowered.org/repository/maven-public/'
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    compileOnly 'org.spongepowered:mixin:0.8.5'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    implementation fg.deobf("curse.maven:goety-586095:9170420")
+    implementation fg.deobf("curse.maven:irons-spells-n-spellbooks-855414:8680180")
+    implementation fg.deobf("curse.maven:curios-309927:6418456")
+    implementation fg.deobf("curse.maven:geckolib-388172:8285794")
+    implementation fg.deobf("curse.maven:playeranimator-658587:4587214")
+    runtimeOnly fg.deobf("curse.maven:irons-lib-1492763:9328058")
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            forge_version          : forge_version,
+            forge_version_range    : forge_version_range,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_id,
+                'Specification-Vendor'    : mod_authors,
+                'Specification-Version'   : '1',
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : project.jar.archiveVersion,
+                'Implementation-Vendor'   : mod_authors,
+                'MixinConfigs'            : 'issgoety.mixins.json'
+        ])
+    }
+}
+
+// Mixin's processor needs official -> SRG names independently of Forge's bytecode remapper.
+// Reverse Forge's SRG file instead of adding another plugin or downloading mapping files.
+def mixinMappings = layout.buildDirectory.file('generated/mixin/official-to-srg.srg')
+def prepareMixinMappings = tasks.register('prepareMixinMappings') {
+    dependsOn 'createSrgToMcp'
+    def sourceMappings = layout.buildDirectory.file('createSrgToMcp/output.srg')
+    inputs.file(sourceMappings)
+    outputs.file(mixinMappings)
+    doLast {
+        File target = mixinMappings.get().asFile
+        target.parentFile.mkdirs()
+        target.withWriter('UTF-8') { writer ->
+            sourceMappings.get().asFile.eachLine('UTF-8') { line ->
+                String[] parts = line.trim().split('\\s+')
+                if (parts.length == 3) {
+                    writer.writeLine("${parts[0]} ${parts[2]} ${parts[1]}")
+                } else if (parts.length == 5 && parts[0] == 'MD:') {
+                    writer.writeLine("MD: ${parts[3]} ${parts[4]} ${parts[1]} ${parts[2]}")
+                } else if (!line.trim().isEmpty()) {
+                    throw new GradleException("Unsupported SRG mapping line: ${line}")
+                }
+            }
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.named('compileJava', JavaCompile).configure {
+    dependsOn prepareMixinMappings
+    // An absolute output path lets Mixin update the refmap across processor rounds
+    // without reopening a Javac Filer resource (which caused FilerException).
+    def refmap = destinationDirectory.file('issgoety.refmap.json')
+    options.compilerArgs += [
+            "-AreobfSrgFile=${mixinMappings.get().asFile.absolutePath}",
+            '-AdefaultObfuscationEnv=searge',
+            "-AoutRefMapFile=${refmap.get().asFile.absolutePath}"
+    ]
+}
+
+// The distributed JAR must use Forge's runtime names, including inherited Item methods.
+tasks.named('jar', Jar).configure {
+    finalizedBy 'reobfJar'
+}

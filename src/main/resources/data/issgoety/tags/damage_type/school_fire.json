@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "goety:magic_fire",
+    "goety:magic_fireball",
+    "goety:no_owner_magic_fireball",
+    "goety:hellfire",
+    "goety:indirect_hellfire",
+    "goety:fire_breath"
+  ]
+}

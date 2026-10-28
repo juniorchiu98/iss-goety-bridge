@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "refmap": "issgoety.refmap.json",
+  "package": "com.jj321.issgoety.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "AbstractSpellMixin",
+    "SoulConversionTickMixin",
+    "ModAttributesMixin",
+    "DarkWandMixin",
+    "GoetySpellSelectionMixin",
+    "StaffGoetyWandMixin",
+    "StaffFocusCastingStateMixin"
+  ],
+  "client": ["FocusSpellIconMixin"],
+  "injectors": {"defaultRequire": 1}
+}

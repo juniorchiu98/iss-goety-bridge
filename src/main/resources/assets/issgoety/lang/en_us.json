@@ -1,0 +1,20 @@
+{
+  "item.issgoety.soul_converter": "Soul Converter",
+  "tooltip.issgoety.socketed_focus": "Focus: %s",
+  "message.issgoety.focus_socketed": "Focus socketed: %s",
+  "message.issgoety.focus_removed": "Focus removed: %s",
+  "message.issgoety.not_enough_souls": "Not enough soul energy",
+  "spell.issgoety.focus_cast": "Focus Spell",
+  "spell.issgoety.focus_cast_continuous": "Continuous Focus Spell",
+  "spell.issgoety.focus_cast_charging": "Charging Focus Spell",
+  "message.issgoety.focus_unsupported": "This focus cannot be cast from a staff",
+  "message.issgoety.focus_cooldown": "Focus is on cooldown",
+  "screen.issgoety.staff_focus": "Staff Focus Socket",
+  "screen.issgoety.staff_focus.current": "Installed focus",
+  "screen.issgoety.staff_focus.inventory": "Available focuses",
+  "screen.issgoety.staff_focus.offhand": "Offhand",
+  "screen.issgoety.staff_focus.remove": "Remove focus",
+  "screen.issgoety.staff_focus.hint": "Press Esc to close",
+  "screen.issgoety.staff_focus.select_hint": "Hover a focus and click, or press X to select the highlighted focus",
+  "screen.issgoety.staff_focus.empty": "No supported Goety focuses in your inventory"
+}
